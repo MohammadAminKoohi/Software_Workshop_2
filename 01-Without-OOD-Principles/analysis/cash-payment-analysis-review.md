@@ -3,8 +3,8 @@
 ## Status
 
 - OpenCode analysis: complete
-- Cash Payment implementation: not started
-- Human approval: pending
+- Cash Payment implementation: complete, pending pull-request review
+- Human approval: approved on 2026-08-22
 - Baseline architecture preserved: yes
 
 ## Confirmed affected code
@@ -19,8 +19,8 @@ Potential evidence-only additions remain optional until approval:
 
 | Purpose | Exact target | Decision |
 |---|---|---|
-| Automated verification | A new standard-library `unittest` file inside `01-Without-OOD-Principles/` | Pending |
-| Demonstrate cash in the executable sample | `01-Without-OOD-Principles/store/main.py`, `build_demo_orders` and `main` | Pending |
+| Automated verification | A new standard-library `unittest` file inside `01-Without-OOD-Principles/` | Approved |
+| Demonstrate cash in the executable sample | `01-Without-OOD-Principles/store/main.py`, `build_demo_orders` and `main` | Not approved; leave unchanged |
 
 No change is proposed for `Customer`, `Order`, `OrderService`,
 `DiscountCalculator`, `MySqlDatabase`, or notification classes. No payment
@@ -53,23 +53,18 @@ analysis:
 4. The existing `BundleOrder` smoke behavior remains the recorded `$5.00`
    baseline. Cash Payment work must not opportunistically correct it.
 
-## Approval decision required
+## Approval decision
 
-Before any implementation, the team must explicitly approve or revise all four
-choices:
+The user explicitly approved the recommended plan on 2026-08-22. The approved
+choices are:
 
 - selector: `payment_method == "cash"`;
 - receipt: `paid_by_cash:<amount with two decimals>`;
 - console text: `[payment] Receiving cash <amount with two decimals>`;
-- evidence scope: whether to add a built-in `unittest` test file, a demo cash
-  order, or both.
+- evidence scope: add focused built-in `unittest` coverage for Cash Payment and
+  regression coverage for existing payment paths; do not change the demo.
 
-Recommended minimal approval: accept the selector, receipt, and console text;
-add focused built-in `unittest` coverage for cash and existing payment paths;
-do not change the demo unless the assignment specifically requires visible demo
-output.
-
-Approval must be recorded in issue #29 or its pull request before the
-implementation checkpoint of Task 1 begins. Merging the preservation/analysis
-PR confirms that the evidence is accepted; it does not itself authorize
-implementation unless the four choices above are explicitly approved.
+The approval is also recorded on GitHub issue #29. OpenCode Build applied only
+this approved scope. Human diff review, independent tests, and measurements are
+recorded in `cash-payment-change-report.md`; the result now awaits its
+pull-request checkpoint.
