@@ -7,7 +7,13 @@ from store.payment import (
     PaymentProcessor,
     PaypalPaymentHandler,
 )
-from store.pricing import DiscountCalculator, ShippingCalculator
+from store.pricing import (
+    DiscountCalculator,
+    QuantityDiscountRule,
+    ShippingCalculator,
+    VipDiscountRule,
+    WelcomeCouponDiscountRule,
+)
 from store.receipt import ReceiptPrinter
 from store.storage import MySqlDatabase
 
@@ -46,10 +52,14 @@ def build_payment_registry():
     }
 
 
+def build_discount_rules():
+    return [VipDiscountRule(), QuantityDiscountRule(), WelcomeCouponDiscountRule()]
+
+
 def build_demo_service() -> OrderService:
     notification = NotificationService()
     return OrderService(
-        discount_calculator=DiscountCalculator(),
+        discount_calculator=DiscountCalculator(build_discount_rules()),
         shipping_calculator=ShippingCalculator(),
         payment_processor=PaymentProcessor(handlers=build_payment_registry()),
         email_sender=notification,

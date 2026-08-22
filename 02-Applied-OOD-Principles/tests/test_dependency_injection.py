@@ -10,7 +10,7 @@ from store.contracts import (
     ShippingCalculatorPort,
     SmsSender,
 )
-from store.main import build_demo_service, build_payment_registry
+from store.main import build_demo_service, build_discount_rules, build_payment_registry
 from store.models import Order, OrderItem
 from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
@@ -234,7 +234,9 @@ class InjectedFakeOrchestrationTests(TestCase):
 class StructuralConformanceTests(TestCase):
     def test_concrete_collaborators_satisfy_their_structural_contracts(self):
         notification = NotificationService()
-        self.assertIsInstance(DiscountCalculator(), DiscountCalculatorPort)
+        self.assertIsInstance(
+            DiscountCalculator(build_discount_rules()), DiscountCalculatorPort
+        )
         self.assertIsInstance(ShippingCalculator(), ShippingCalculatorPort)
         self.assertIsInstance(
             PaymentProcessor(build_payment_registry()), PaymentProcessorPort

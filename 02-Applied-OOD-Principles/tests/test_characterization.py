@@ -2,7 +2,12 @@ import io
 from contextlib import redirect_stdout
 from unittest import TestCase
 
-from store.main import build_demo_orders, build_payment_registry, main
+from store.main import (
+    build_demo_orders,
+    build_discount_rules,
+    build_payment_registry,
+    main,
+)
 from store.models import BundleOrder, Customer, Order, OrderItem
 from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
@@ -48,7 +53,7 @@ def make_regular(**overrides):
 def make_default_service():
     notification = NotificationService()
     return OrderService(
-        discount_calculator=DiscountCalculator(),
+        discount_calculator=DiscountCalculator(build_discount_rules()),
         shipping_calculator=ShippingCalculator(),
         payment_processor=PaymentProcessor(build_payment_registry()),
         email_sender=notification,
@@ -118,7 +123,7 @@ class PaymentCharacterizationTests(TestCase):
 
 class DiscountCharacterizationTests(TestCase):
     def setUp(self):
-        self.calculator = DiscountCalculator()
+        self.calculator = DiscountCalculator(build_discount_rules())
 
     def calculate_for(self, customer, items=None, coupons=None):
         order = Order(
