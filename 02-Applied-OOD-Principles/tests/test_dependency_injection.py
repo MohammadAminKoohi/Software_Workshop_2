@@ -10,7 +10,7 @@ from store.contracts import (
     ShippingCalculatorPort,
     SmsSender,
 )
-from store.main import build_demo_service
+from store.main import build_demo_service, build_payment_registry
 from store.models import Order, OrderItem
 from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
@@ -236,7 +236,9 @@ class StructuralConformanceTests(TestCase):
         notification = NotificationService()
         self.assertIsInstance(DiscountCalculator(), DiscountCalculatorPort)
         self.assertIsInstance(ShippingCalculator(), ShippingCalculatorPort)
-        self.assertIsInstance(PaymentProcessor(), PaymentProcessorPort)
+        self.assertIsInstance(
+            PaymentProcessor(build_payment_registry()), PaymentProcessorPort
+        )
         self.assertIsInstance(notification, EmailSender)
         self.assertIsInstance(notification, SmsSender)
         self.assertIsInstance(MySqlDatabase(), OrderRepository)

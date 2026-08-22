@@ -2,7 +2,7 @@ import io
 from contextlib import redirect_stdout
 from unittest import TestCase
 
-from store.main import build_demo_orders, main
+from store.main import build_demo_orders, build_payment_registry, main
 from store.models import BundleOrder, Customer, Order, OrderItem
 from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
@@ -50,7 +50,7 @@ def make_default_service():
     return OrderService(
         discount_calculator=DiscountCalculator(),
         shipping_calculator=ShippingCalculator(),
-        payment_processor=PaymentProcessor(),
+        payment_processor=PaymentProcessor(build_payment_registry()),
         email_sender=notification,
         sms_sender=notification,
         database=MySqlDatabase(),
@@ -60,7 +60,7 @@ def make_default_service():
 
 class PaymentCharacterizationTests(TestCase):
     def setUp(self):
-        self.processor = PaymentProcessor()
+        self.processor = PaymentProcessor(build_payment_registry())
 
     def test_credit_card_returns_exact_string_and_prints_charging_line(self):
         order = Order(
