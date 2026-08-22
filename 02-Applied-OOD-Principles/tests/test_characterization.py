@@ -44,6 +44,17 @@ def make_regular(**overrides):
     return Customer(**fields)
 
 
+def make_default_service():
+    notification = NotificationService()
+    return OrderService(
+        discount_calculator=DiscountCalculator(),
+        payment_processor=PaymentProcessor(),
+        email_sender=notification,
+        sms_sender=notification,
+        database=MySqlDatabase(),
+    )
+
+
 class PaymentCharacterizationTests(TestCase):
     def setUp(self):
         self.processor = PaymentProcessor()
@@ -152,7 +163,7 @@ class DiscountCharacterizationTests(TestCase):
 
 class ValidationCharacterizationTests(TestCase):
     def setUp(self):
-        self.service = OrderService()
+        self.service = make_default_service()
 
     def test_empty_non_bundle_order_is_rejected_before_pricing(self):
         order = Order(id=10, customer=make_regular())
@@ -209,7 +220,7 @@ class DemoStdoutCharacterizationTests(TestCase):
 
 class CheckoutFlowCharacterizationTests(TestCase):
     def test_simple_checkout_pins_status_persistence_and_output_order(self):
-        service = OrderService()
+        service = make_default_service()
         order = Order(
             id=201,
             customer=make_regular(),
@@ -240,7 +251,7 @@ class CheckoutFlowCharacterizationTests(TestCase):
         )
 
     def test_notify_false_suppresses_email_and_sms_but_keeps_receipt(self):
-        service = OrderService()
+        service = make_default_service()
         order = Order(
             id=202,
             customer=make_regular(),
@@ -256,7 +267,7 @@ class CheckoutFlowCharacterizationTests(TestCase):
         self.assertIn("--- Receipt for order 202 ---", output)
 
     def test_bundle_checkout_keeps_zero_subtotal_and_five_dollar_total(self):
-        service = OrderService()
+        service = make_default_service()
         laptop, books, bundle = build_demo_orders()
         self.assertIsNone(service.database.load_order(bundle.id))
 

@@ -1,5 +1,9 @@
 from store.models import BundleOrder, Customer, Order, OrderItem
+from store.notification import NotificationService
 from store.order_service import OrderService
+from store.payment import PaymentProcessor
+from store.pricing import DiscountCalculator
+from store.storage import MySqlDatabase
 
 
 def build_demo_orders():
@@ -28,8 +32,19 @@ def build_demo_orders():
     return laptop, books, bundle
 
 
+def build_demo_service() -> OrderService:
+    notification = NotificationService()
+    return OrderService(
+        discount_calculator=DiscountCalculator(),
+        payment_processor=PaymentProcessor(),
+        email_sender=notification,
+        sms_sender=notification,
+        database=MySqlDatabase(),
+    )
+
+
 def main() -> None:
-    service = OrderService()
+    service = build_demo_service()
     laptop, books, bundle = build_demo_orders()
 
     print(">>> Checkout a simple order")

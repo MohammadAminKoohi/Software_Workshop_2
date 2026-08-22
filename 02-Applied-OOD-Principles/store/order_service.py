@@ -1,16 +1,27 @@
+from store.contracts import (
+    DiscountCalculatorPort,
+    EmailSender,
+    OrderRepository,
+    PaymentProcessorPort,
+    SmsSender,
+)
 from store.models import BundleOrder, Order
-from store.notification import NotificationService
-from store.payment import PaymentProcessor
-from store.pricing import DiscountCalculator
-from store.storage import MySqlDatabase
 
 
 class OrderService:
-    def __init__(self):
-        self.discount_calculator = DiscountCalculator()
-        self.payment_processor = PaymentProcessor()
-        self.notification = NotificationService()
-        self.database = MySqlDatabase()
+    def __init__(
+        self,
+        discount_calculator: DiscountCalculatorPort,
+        payment_processor: PaymentProcessorPort,
+        email_sender: EmailSender,
+        sms_sender: SmsSender,
+        database: OrderRepository,
+    ):
+        self.discount_calculator = discount_calculator
+        self.payment_processor = payment_processor
+        self.email_sender = email_sender
+        self.sms_sender = sms_sender
+        self.database = database
 
     def process_order(self, order: Order, notify: bool = True) -> Order:
         # 1. validate
@@ -35,8 +46,8 @@ class OrderService:
         # 5. notify
         if notify:
             message = f"Order {order.id} total ${total:.2f} ({receipt})"
-            self.notification.send_email(order.customer, message)
-            self.notification.send_sms(order.customer, message)
+            self.email_sender.send_email(order.customer, message)
+            self.sms_sender.send_sms(order.customer, message)
 
         # 6. print a receipt
         self._print_receipt(order, subtotal, discount, shipping, total, receipt)
