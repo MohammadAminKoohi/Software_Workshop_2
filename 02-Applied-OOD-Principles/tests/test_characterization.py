@@ -332,17 +332,13 @@ class NotificationCharacterizationTests(TestCase):
 
         self.assertEqual(output, "[sms] to 555-0199: sms-ok\n")
 
-    def test_sms_only_notifier_email_raises_not_implemented(self):
+    def test_sms_only_notifier_does_not_advertise_email(self):
         notifier = SmsOnlyNotifier()
-        with self.assertRaises(NotImplementedError) as ctx:
-            notifier.send_email(make_regular(), "nope")
-        self.assertEqual(str(ctx.exception), "An SMS notifier cannot send email")
+        self.assertFalse(hasattr(notifier, "send_email"))
 
-    def test_sms_only_notifier_push_raises_not_implemented(self):
+    def test_sms_only_notifier_does_not_advertise_push(self):
         notifier = SmsOnlyNotifier()
-        with self.assertRaises(NotImplementedError) as ctx:
-            notifier.send_push(make_regular(), "nope")
-        self.assertEqual(str(ctx.exception), "An SMS notifier cannot send push")
+        self.assertFalse(hasattr(notifier, "send_push"))
 
 
 class BundleZeroValueCharacterizationTests(TestCase):
