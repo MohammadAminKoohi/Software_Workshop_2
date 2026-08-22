@@ -4,8 +4,9 @@
 - Critical review: complete.
 - Coordinator recommendation: approve the corrected plan in
   `corrected-plan.md`.
-- Human approval: **pending**.
-- Build-mode authorization: **not granted**.
+- Human approval: **granted by authenticated repository owner
+  `MohammadAminKoohi` merging PR #43 on 2026-08-22 at 20:07:59 UTC**.
+- Build-mode authorization: **granted for the corrected Steps 0–8 only**.
 - Production refactoring performed in this task: **none**.
 
 The human reviewer should explicitly confirm:
@@ -17,5 +18,8 @@ The human reviewer should explicitly confirm:
    `SmsOnlyNotifier`; and
 4. exclusion of Cash Payment and other unconfirmed redesigns.
 
-Approval should be recorded through a genuine review or an attributable written
-decision. AI preparation of this plan is not represented as teammate approval.
+Approval evidence: PR #43 contains the corrected scope and was merged by
+`MohammadAminKoohi` into main as `db4e8450763aeadc20ab987cc423c48c8470f43c`.
+GitHub reports no submitted review and no CI checks for that PR, so neither is
+claimed. The merge is treated as the owner's attributable approval decision;
+AI preparation of the plan is not represented as teammate approval.

@@ -1,5 +1,21 @@
 from store.models import BundleOrder, Customer, Order, OrderItem
+from store.notification import NotificationService
 from store.order_service import OrderService
+from store.payment import (
+    BitcoinPaymentHandler,
+    CreditCardPaymentHandler,
+    PaymentProcessor,
+    PaypalPaymentHandler,
+)
+from store.pricing import (
+    DiscountCalculator,
+    QuantityDiscountRule,
+    ShippingCalculator,
+    VipDiscountRule,
+    WelcomeCouponDiscountRule,
+)
+from store.receipt import ReceiptPrinter
+from store.storage import MySqlDatabase
 
 
 def build_demo_orders():
@@ -28,8 +44,33 @@ def build_demo_orders():
     return laptop, books, bundle
 
 
+def build_payment_registry():
+    return {
+        "credit_card": CreditCardPaymentHandler(),
+        "paypal": PaypalPaymentHandler(),
+        "bitcoin": BitcoinPaymentHandler(),
+    }
+
+
+def build_discount_rules():
+    return [VipDiscountRule(), QuantityDiscountRule(), WelcomeCouponDiscountRule()]
+
+
+def build_demo_service() -> OrderService:
+    notification = NotificationService()
+    return OrderService(
+        discount_calculator=DiscountCalculator(build_discount_rules()),
+        shipping_calculator=ShippingCalculator(),
+        payment_processor=PaymentProcessor(handlers=build_payment_registry()),
+        email_sender=notification,
+        sms_sender=notification,
+        database=MySqlDatabase(),
+        receipt_printer=ReceiptPrinter(),
+    )
+
+
 def main() -> None:
-    service = OrderService()
+    service = build_demo_service()
     laptop, books, bundle = build_demo_orders()
 
     print(">>> Checkout a simple order")

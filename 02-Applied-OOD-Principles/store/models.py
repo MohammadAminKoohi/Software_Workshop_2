@@ -44,7 +44,23 @@ class Order:
         return sum(item.quantity for item in self.items)
 
 
-class BundleOrder(Order):
-    def __init__(self, id: int, customer: Customer, orders: List[Order]):
-        super().__init__(id=id, customer=customer, items=[])
-        self.orders = orders
+@dataclass
+class BundleOrder:
+    id: int
+    customer: Customer
+    orders: List[Order]
+    status: str = "pending"
+    payment_method: str = ""
+    coupons: List[str] = field(default_factory=list)
+    items: List[OrderItem] = field(default_factory=list, init=False)
+
+    @property
+    def subtotal(self) -> float:
+        return 0.0
+
+    @property
+    def item_count(self) -> int:
+        return 0
+
+
+CheckoutOrder = Order | BundleOrder
