@@ -8,18 +8,22 @@ Cash Payment experiment that must occur before any SOLID refactoring.
 - Source checkpoint: `baseline-initial`
 - Source commit: `ace844f31cb5e39c2e0fc48faecabe07d60f30f0`
 - Preserved implementation: `store/`
-- Cash Payment implementation: not started
-- Approval status: pending human review of the OpenCode analysis
+- Cash Payment implementation: complete, pending pull-request review
+- Approval status: approved on 2026-08-22 and recorded in issue #29
 
 The seven files under this directory's `store/` were copied byte-for-byte from
-the root `store/` at `baseline-initial`. No architecture, behavior, package
-metadata, dependency, or test was added to the preserved copy in this phase.
+the root `store/` at `baseline-initial`. OpenCode then added Cash Payment to the
+preserved copy without refactoring its conditional-dispatch architecture. The
+root starter `store/` remains unchanged.
 
 ## Evidence
 
 - [Exact OpenCode prompt](opencode/cash-payment-analysis-prompt.md)
 - [Verbatim OpenCode output](opencode/cash-payment-analysis-output.md)
 - [Analysis review and approval gate](analysis/cash-payment-analysis-review.md)
+- [Exact implementation prompt](opencode/cash-payment-implementation-prompt.md)
+- [Verbatim implementation output](opencode/cash-payment-implementation-output.md)
+- [Change report and measurements](analysis/cash-payment-change-report.md)
 
 OpenCode 1.18.3 performed the analysis with the `opencode/big-pickle` model in
 an analysis-only agent. Its initially configured Cloudflare model was
@@ -35,7 +39,9 @@ From the repository root:
 diff -ru store 01-Without-OOD-Principles/store
 ```
 
-Expected result before Cash Payment implementation: exit code 0 and no output.
+Before Cash Payment implementation, the command returned exit code 0 with no
+output. After implementation, the only production difference is the approved
+four-line Cash Payment branch in `store/payment.py`.
 
 ## Baseline checks
 
@@ -47,7 +53,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -v
 PYTHONDONTWRITEBYTECODE=1 python3 -m store.main
 ```
 
-The preserved baseline compiles and its demo runs. Standard-library discovery
-finds zero tests and returns exit code 5; this is recorded as an absent test
-suite rather than a passing suite. The demo retains the baseline totals of
+At the preserved baseline, standard-library discovery found zero tests and
+returned exit code 5. After the approved experiment, compilation passes, all
+six focused tests pass, and the unchanged demo retains the baseline totals of
 `$819.99` for the simple VIP order and `$5.00` for the bundle order.
