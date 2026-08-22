@@ -1,0 +1,156 @@
+# OpenCode SOLID Skill Report
+
+## Skill purpose
+
+The project Skill at `.opencode/skills/solid-refactoring/SKILL.md` guides
+OpenCode through evidence-gated SOLID analysis and approved refactoring. It is
+intended to prevent three common failures: declaring generic smells to be SOLID
+violations, proposing a large redesign before understanding behavior, and
+editing before the user approves an exact scope.
+
+The Skill supports two phases:
+
+1. inspect, classify, propose, and request approval without editing;
+2. after explicit approval, apply only the approved items incrementally, inspect
+   diffs, run discovered tests/checks, and summarize evidence.
+
+Task #32 tests only phase 1. No project refactoring is authorized or performed.
+
+## Information supplied to OpenCode
+
+The Skill itself supplies:
+
+- trigger terms for SRP, OCP, LSP, ISP, DIP, and SOLID refactoring;
+- required inputs: scope, exclusions, revision, working-tree state, callers,
+  implementations, tests, baseline behavior, mode, and approval status;
+- a principle-specific evidence test so size, conditionals, inheritance, broad
+  APIs, or absent Python interfaces are not treated as proof by themselves;
+- classifications of `confirmed`, `not demonstrated`, and `uncertain`;
+- proposal requirements: candidate mapping, exact files, smallest change,
+  behavior, tests, risk, tradeoff, and rationale;
+- a hard approval gate and rules for partial approval/scope expansion;
+- a post-approval implementation, diff-review, and test workflow;
+- separate analysis-only and post-implementation output formats;
+- a completion guard and side-effect-safe probe rules.
+
+The test prompt supplies the repository-specific context:
+
+- analyze only the unchanged root `store/`;
+- treat the Cash experiment and existing SOLID document as leads, not proof;
+- inspect source and callers independently;
+- cover all five principles with exact file/class/method/line evidence;
+- remain analysis-only, produce an approval request, and disclose edit status.
+
+OpenCode discovered the current revision, seven source files, callers, lack of a
+root test suite, and baseline behavior by inspecting the repository. Conclusions
+were not prefilled into the Skill.
+
+## Why this structure was chosen
+
+- **Trigger-focused frontmatter** makes OpenCode discover the Skill for literal
+  SOLID principle and refactoring requests without special project config.
+- **Context before conclusions** prevents isolated-method judgments and stale
+  citations.
+- **Principle-specific evidence tests** reduce false positives while permitting
+  honest uncertainty.
+- **Proposal validity checks** ensure a proposed correction actually improves
+  the named principle; moving a conditional or retaining high-level concrete
+  construction is not mislabeled as a complete correction.
+- **Explicit approval state** separates analysis from authorization to edit.
+  Approval of one numbered item does not authorize the others.
+- **Incremental Phase B** is useful after approval but remains unexecuted here,
+  satisfying the assignment's no-refactoring constraint.
+- **Required output schemas** make evidence, tradeoffs, tests, and attribution
+  easy to review and reuse in the final README.
+- **No supporting scripts** were added because the Skill needs judgment and
+  repository inspection rather than deterministic transformation.
+
+## Validation and refinement history
+
+| Version | Exact session | Result | Review finding | Refinement |
+|---|---|---|---|---|
+| 0.1 | `ses_fd52bb2e9ffe3A7L5ynYcvbg6Q` | Loaded Skill, inspected source, ran probes, zero file diff; exited without final response | Missing table, proposals, and approval request | Added a completion guard and probe budget |
+| 0.2 | `ses_fd51f1989ffenKLIr0WmMXULPT` | Produced table/proposals/approval request | Omitted DIP table row; smoke probe created `store/__pycache__/`; suggested deletion from caller absence; speculative bundle total | Required side-effect-safe probes, every named principle, proposal-to-candidate mapping, dead-code caution, and no unsupported numbers |
+| 0.3 | `ses_fd5163495ffe6mJmLpkd3tVM7F` | Complete response; two bytecode-disabled probes; identical status; all five principles covered | Discount tuple list did not actually create an OCP extension boundary; concrete defaults inside `OrderService` were only partial DIP | Added principle-specific proposal-validity checks and mandatory proposal tradeoffs |
+| 1.0 | `ses_fd50ea122ffecFs9W2YUF6JN0B` | Release acceptance passed: complete evidence table, safe probes, false-positive section, scoped proposals, explicit approval request, identical status | One wording error remained: P-3 said `≈ $1194.99` for a future charge although that is the child subtotal, not a computed post-discount total | Recorded as a manual correction for later Plan review; the Skill already forbids uncomputed numeric predictions |
+
+The version 0.2 bytecode cache contained only files generated by its probe. The
+coordinator removed that cache before the next test and verified source remained
+unchanged. No OpenCode run edited application source.
+
+## Evaluation of the release output
+
+### Correct analysis
+
+- Inspected all seven root source files and traced clients before conclusions.
+- Confirmed SRP evidence in `OrderService`, payment OCP, two observable LSP
+  cases, the notifier ISP case, and concrete-construction DIP.
+- Correctly downgraded discount OCP to uncertain because repository evidence
+  does not establish it as a growing extension axis.
+- Used two safe probes to demonstrate bundle and notifier substitution behavior.
+- Rejected unsupported claims about `Customer`, the MySQL name, missing Python
+  interfaces, inheritance alone, and a multi-method interface alone.
+- Requested separate approval for every proposal and made no edits.
+
+### False positives, omissions, and unsupported suggestions
+
+- The initial run's missing final response was an output-completeness failure,
+  not an analysis result.
+- Version 0.2's absent DIP candidate and source-cache side effect were genuine
+  omissions and safety defects.
+- Version 0.3's tuple-list discount proposal reorganized code but did not make
+  the next discount rule independently extensible; it was rejected.
+- Version 0.3's concrete defaults improved testability but did not fully invert
+  dependency direction; version 1.0 moved wiring to the composition root.
+- Release P-3's approximate future charge is unsupported. The correct statement
+  is: repairing bundle aggregation will increase the current `$5.00` result,
+  while the exact total must be calculated after the domain choice and pinned by
+  tests. No implementation should use the approximate value.
+
+No confirmed source-level violation from `docs/solid-analysis.md` was missed in
+the release candidate. The release appropriately treats discount OCP as
+uncertain rather than forcing agreement with the earlier document.
+
+## Structure validation and tests
+
+`opencode debug skill` on OpenCode 1.18.3 returned exit 0 and discovered:
+
+```text
+name: solid-refactoring
+location: .opencode/skills/solid-refactoring/SKILL.md
+```
+
+The four exact prompts and corresponding outputs are preserved in this
+directory. Each model run used `opencode/big-pickle` and the Plan agent. Plan
+mode and the Skill both prohibited edits; Git status independently verified the
+release run left only its pre-existing Skill/evidence files.
+
+Project verification for this task must still report the unchanged baseline:
+bytecode compilation and the demo succeed, while root unittest discovery finds
+zero tests and exits 5. The Skill's post-approval editing path is validated by
+instruction inspection only; executing it would violate Task #32.
+
+## Attribution
+
+- Skill instructions, test harness, evaluation, and manual refinements: created
+  by the coding coordinator (Codex) under Mohammad's Task #32 direction.
+- Repository analyses in the preserved output files: OpenCode 1.18.3 using
+  `opencode/big-pickle` in Plan mode.
+- Human approval of project refactoring: none requested or claimed in this
+  task.
+- Project source changes: none.
+
+## README-ready summary
+
+The `solid-refactoring` OpenCode Skill requires the Agent to inspect source,
+callers, contracts, and tests before identifying SRP, OCP, LSP, ISP, or DIP
+violations. It supplies evidence tests for each principle, requires honest
+uncertainty handling, and maps every confirmed finding to the smallest proposal
+with behavior risks, tradeoffs, and tests. Its approval gate prohibits all file
+changes until the user approves exact numbered items. After approval it guides
+incremental edits, diff inspection, regression testing, and evidence summaries.
+The structure was chosen to separate diagnosis from authorization and to avoid
+generic-pattern refactoring. Four Plan-mode validation runs refined completion,
+side-effect safety, principle coverage, and proposal validity. The release test
+loaded the Skill, inspected all root code, used two safe probes, requested
+approval, and left the project unchanged.
