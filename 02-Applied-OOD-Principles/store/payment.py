@@ -1,28 +1,28 @@
 from typing import Mapping, Protocol
 
-from store.models import Order
+from store.models import CheckoutOrder
 
 
 class PaymentHandler(Protocol):
-    def process(self, order: Order, amount: float) -> str: ...
+    def process(self, order: CheckoutOrder, amount: float) -> str: ...
 
 
 class CreditCardPaymentHandler:
-    def process(self, order: Order, amount: float) -> str:
+    def process(self, order: CheckoutOrder, amount: float) -> str:
         card = order.customer.credit_card
         print(f"[payment] Charging card {card} {amount:.2f}")
         return f"paid_by_credit_card:{amount:.2f}"
 
 
 class PaypalPaymentHandler:
-    def process(self, order: Order, amount: float) -> str:
+    def process(self, order: CheckoutOrder, amount: float) -> str:
         email = order.customer.email
         print(f"[payment] Charging PayPal {email} {amount:.2f}")
         return f"paid_by_paypal:{amount:.2f}"
 
 
 class BitcoinPaymentHandler:
-    def process(self, order: Order, amount: float) -> str:
+    def process(self, order: CheckoutOrder, amount: float) -> str:
         address = order.customer.bitcoin_address
         print(f"[payment] Charging BTC {address} {amount:.2f}")
         return f"paid_by_bitcoin:{amount:.2f}"
@@ -32,7 +32,7 @@ class PaymentProcessor:
     def __init__(self, handlers: Mapping[str, PaymentHandler]):
         self.handlers = dict(handlers)
 
-    def process(self, order: Order, amount: float) -> str:
+    def process(self, order: CheckoutOrder, amount: float) -> str:
         method = order.payment_method
         handler = self.handlers.get(method)
         if handler is None:

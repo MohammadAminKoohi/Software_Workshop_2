@@ -345,10 +345,10 @@ class BundleZeroValueCharacterizationTests(TestCase):
     def setUp(self):
         self.laptop, self.books, self.bundle = build_demo_orders()
 
-    def test_bundle_is_currently_a_subclass_of_order(self):
-        self.assertIsInstance(self.bundle, Order)
+    def test_bundle_uses_composition_instead_of_order_inheritance(self):
+        self.assertNotIsInstance(self.bundle, Order)
 
-    def test_bundle_reports_inherited_zero_values_despite_children(self):
+    def test_bundle_preserves_zero_values_despite_children(self):
         self.assertEqual(self.bundle.items, [])
         self.assertEqual(self.bundle.subtotal, 0)
         self.assertEqual(self.bundle.item_count, 0)

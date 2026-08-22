@@ -1,10 +1,10 @@
-from store.models import Order
+from store.models import CheckoutOrder
 
 
 class ReceiptPrinter:
     def print_receipt(
         self,
-        order: Order,
+        order: CheckoutOrder,
         subtotal: float,
         discount: float,
         shipping: float,

@@ -1,11 +1,11 @@
 from typing import Protocol, runtime_checkable
 
-from store.models import Customer, Order
+from store.models import CheckoutOrder, Customer
 
 
 @runtime_checkable
 class DiscountCalculatorPort(Protocol):
-    def calculate(self, order: Order) -> float: ...
+    def calculate(self, order: CheckoutOrder) -> float: ...
 
 
 @runtime_checkable
@@ -15,7 +15,7 @@ class ShippingCalculatorPort(Protocol):
 
 @runtime_checkable
 class PaymentProcessorPort(Protocol):
-    def process(self, order: Order, amount: float) -> str: ...
+    def process(self, order: CheckoutOrder, amount: float) -> str: ...
 
 
 @runtime_checkable
@@ -30,14 +30,14 @@ class SmsSender(Protocol):
 
 @runtime_checkable
 class OrderRepository(Protocol):
-    def save_order(self, order: Order) -> None: ...
+    def save_order(self, order: CheckoutOrder) -> None: ...
 
 
 @runtime_checkable
 class ReceiptPresenter(Protocol):
     def print_receipt(
         self,
-        order: Order,
+        order: CheckoutOrder,
         subtotal: float,
         discount: float,
         shipping: float,

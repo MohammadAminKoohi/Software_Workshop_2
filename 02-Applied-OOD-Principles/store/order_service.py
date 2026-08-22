@@ -7,7 +7,7 @@ from store.contracts import (
     ShippingCalculatorPort,
     SmsSender,
 )
-from store.models import BundleOrder, Order
+from store.models import BundleOrder, CheckoutOrder
 
 
 class OrderService:
@@ -29,7 +29,9 @@ class OrderService:
         self.database = database
         self.receipt_printer = receipt_printer
 
-    def process_order(self, order: Order, notify: bool = True) -> Order:
+    def process_order(
+        self, order: CheckoutOrder, notify: bool = True
+    ) -> CheckoutOrder:
         # 1. validate
         if not order.items and not isinstance(order, BundleOrder):
             raise ValueError("Order has no items")
