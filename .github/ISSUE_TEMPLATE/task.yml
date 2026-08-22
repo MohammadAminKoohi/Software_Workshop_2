@@ -1,0 +1,58 @@
+name: Task
+description: Track one SWE Lab 2 work item
+title: ""
+labels: []
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for one focused, verifiable SWE Lab 2 task.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: State the outcome this task must achieve.
+      placeholder: Describe the intended outcome without prescribing unrelated work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: List observable conditions that must be true before this task is complete.
+      placeholder: |
+        - [ ] First verifiable condition
+        - [ ] Second verifiable condition
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-components
+    attributes:
+      label: Expected files/components
+      description: Identify likely files, modules, configuration, or documentation. Write N/A if unknown.
+      placeholder: List expected files or components; update this list if the implementation differs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing
+      description: Describe tests, checks, or review steps required for this task.
+      placeholder: Include commands and expected results, or explain why automated testing does not apply.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence-report-notes
+    attributes:
+      label: Evidence/report notes
+      description: Record evidence that should be retained for the experiment or final report.
+      placeholder: Note prompts, outputs, metrics, screenshots, decisions, and manual corrections to preserve.
+    validations:
+      required: true
