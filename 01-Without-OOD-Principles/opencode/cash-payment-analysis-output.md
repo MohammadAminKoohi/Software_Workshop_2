@@ -9,6 +9,11 @@
 - Result: successful, exit code 0
 - Repository changes made by OpenCode: none
 
+The output was produced before the assignment directory name was corrected.
+Historical `Principles-OOD-Without-01/` references in the response mean the
+directory now named `01-Without-OOD-Principles/`; the response itself remains
+verbatim.
+
 The response below is preserved verbatim from the successful OpenCode run.
 
 ---

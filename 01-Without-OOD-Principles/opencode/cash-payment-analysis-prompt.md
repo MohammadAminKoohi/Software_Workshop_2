@@ -3,6 +3,10 @@
 The following prompt is the exact instruction supplied to OpenCode for the
 original-design Cash Payment experiment.
 
+The prompt was run before the assignment directory name was corrected. Its
+historical `Principles-OOD-Without-01/` reference means the directory now named
+`01-Without-OOD-Principles/`; the prompt below remains verbatim.
+
 ```text
 You are analyzing the SWE Lab 2 starter project for the first Cash Payment
 experiment. Inspect the repository, with the implementation target specifically

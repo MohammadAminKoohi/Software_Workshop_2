@@ -1,6 +1,6 @@
 # Original Design Experiment
 
-`Principles-OOD-Without-01/` preserves the starter implementation for the
+`01-Without-OOD-Principles/` preserves the starter implementation for the
 Cash Payment experiment that must occur before any SOLID refactoring.
 
 ## Baseline
@@ -32,14 +32,14 @@ available model.
 From the repository root:
 
 ```bash
-diff -ru store Principles-OOD-Without-01/store
+diff -ru store 01-Without-OOD-Principles/store
 ```
 
 Expected result before Cash Payment implementation: exit code 0 and no output.
 
 ## Baseline checks
 
-Run from `Principles-OOD-Without-01/`:
+Run from `01-Without-OOD-Principles/`:
 
 ```bash
 PYTHONPYCACHEPREFIX=/tmp/swe-lab2-without-pycache python3 -m compileall -q store

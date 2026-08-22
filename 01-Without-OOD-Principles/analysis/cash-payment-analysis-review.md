@@ -13,14 +13,14 @@ The smallest architecture-preserving production change proposed by OpenCode is:
 
 | Requirement | Exact target | Change |
 |---|---|---|
-| Accept Cash Payment | `Principles-OOD-Without-01/store/payment.py`, `PaymentProcessor.process` | Add one `elif method == "cash"` branch before the existing unknown-method error. |
+| Accept Cash Payment | `01-Without-OOD-Principles/store/payment.py`, `PaymentProcessor.process` | Add one `elif method == "cash"` branch before the existing unknown-method error. |
 
 Potential evidence-only additions remain optional until approval:
 
 | Purpose | Exact target | Decision |
 |---|---|---|
-| Automated verification | A new standard-library `unittest` file inside `Principles-OOD-Without-01/` | Pending |
-| Demonstrate cash in the executable sample | `Principles-OOD-Without-01/store/main.py`, `build_demo_orders` and `main` | Pending |
+| Automated verification | A new standard-library `unittest` file inside `01-Without-OOD-Principles/` | Pending |
+| Demonstrate cash in the executable sample | `01-Without-OOD-Principles/store/main.py`, `build_demo_orders` and `main` | Pending |
 
 No change is proposed for `Customer`, `Order`, `OrderService`,
 `DiscountCalculator`, `MySqlDatabase`, or notification classes. No payment
@@ -41,8 +41,10 @@ The OpenCode analysis correctly:
 The following clarifications correct or tighten the output without replacing its
 analysis:
 
-1. References such as `store/payment.py` in the OpenCode response mean
-   `Principles-OOD-Without-01/store/payment.py`, not the root baseline copy.
+1. Historical references to `Principles-OOD-Without-01/` in the verbatim
+   OpenCode prompt/output refer to the directory now named
+   `01-Without-OOD-Principles/`. The assignment name was corrected after the
+   analysis run; the evidence itself remains unedited.
 2. The future metrics must record **one existing method changed**
    (`PaymentProcessor.process`), even though zero methods are added.
 3. The repository has no pytest dependency. If automated tests are approved,
@@ -67,7 +69,7 @@ add focused built-in `unittest` coverage for cash and existing payment paths;
 do not change the demo unless the assignment specifically requires visible demo
 output.
 
-Approval must be recorded in issue #29 or its pull request before task #30 begins.
-Merging the preservation/analysis PR confirms that the evidence is accepted; it
-does not itself authorize implementation unless the four choices above are
-explicitly approved.
+Approval must be recorded in issue #29 or its pull request before the
+implementation checkpoint of Task 1 begins. Merging the preservation/analysis
+PR confirms that the evidence is accepted; it does not itself authorize
+implementation unless the four choices above are explicitly approved.
