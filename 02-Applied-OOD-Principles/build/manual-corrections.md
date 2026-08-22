@@ -6,6 +6,8 @@
 | 0 | Initial exploratory demo/probe commands imported root `store/` because their working directory was the repository root. | Required and independently reran compilation, tests, and smoke from `02-Applied-OOD-Principles/`; accepted evidence only from the applied workspace. | Identical source made the initial values informative, but the attribution was incorrect and future steps may diverge. |
 | 0 | First generated expectations used `999.99` for the demo laptop subtotal, `90.00` for books, and one extra receipt-padding space. | OpenCode corrected them to observed values `1024.99`, `170.00`, child total `1194.99`, and the exact output spacing; coordinator reran all 26 tests. | Characterization must describe existing behavior rather than force incorrect expectations. |
 | 1 | OpenCode used Bash's `PIPESTATUS` under zsh, producing an empty reported full-suite status, and initially scoped `git diff` with paths relative to the wrong directory. | It reran the suite without a pipeline and obtained exit 0, then reran the diff with `git -C` and repository-relative paths. The coordinator independently repeated both checks. | Exit codes and measurements must be observed, not inferred from a successful-looking tail or an accidentally empty diff. |
+| 2 | OpenCode introduced a double comma in the DI signature expectation and omitted the new `ShippingCalculator` import from `main.py`. | The focused import failure exposed the syntax error; the full-suite failure exposed the missing production import. OpenCode fixed both, then reran 44 tests successfully; the coordinator reran the same suite. | A passing focused shipping test alone did not exercise every composition-root caller, demonstrating why every step also needs full discovery. |
 
-No generated Step 1 production correction was necessary after review. Later
-corrections will be appended after their focused diff and test review.
+No additional coordinator-authored production correction was necessary after
+OpenCode's Step 2 self-corrections. Later corrections will be appended after
+their focused diff and test review.

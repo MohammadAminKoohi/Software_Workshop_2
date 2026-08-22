@@ -2,7 +2,7 @@ from store.models import BundleOrder, Customer, Order, OrderItem
 from store.notification import NotificationService
 from store.order_service import OrderService
 from store.payment import PaymentProcessor
-from store.pricing import DiscountCalculator
+from store.pricing import DiscountCalculator, ShippingCalculator
 from store.storage import MySqlDatabase
 
 
@@ -36,6 +36,7 @@ def build_demo_service() -> OrderService:
     notification = NotificationService()
     return OrderService(
         discount_calculator=DiscountCalculator(),
+        shipping_calculator=ShippingCalculator(),
         payment_processor=PaymentProcessor(),
         email_sender=notification,
         sms_sender=notification,

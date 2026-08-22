@@ -1,6 +1,11 @@
 from store.models import Order
 
 
+class ShippingCalculator:
+    def calculate(self, subtotal: float) -> float:
+        return 5.0 if subtotal < 100 else 0.0
+
+
 class DiscountCalculator:
     def calculate(self, order: Order) -> float:
         subtotal = order.subtotal

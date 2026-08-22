@@ -3,6 +3,7 @@ from store.contracts import (
     EmailSender,
     OrderRepository,
     PaymentProcessorPort,
+    ShippingCalculatorPort,
     SmsSender,
 )
 from store.models import BundleOrder, Order
@@ -12,12 +13,14 @@ class OrderService:
     def __init__(
         self,
         discount_calculator: DiscountCalculatorPort,
+        shipping_calculator: ShippingCalculatorPort,
         payment_processor: PaymentProcessorPort,
         email_sender: EmailSender,
         sms_sender: SmsSender,
         database: OrderRepository,
     ):
         self.discount_calculator = discount_calculator
+        self.shipping_calculator = shipping_calculator
         self.payment_processor = payment_processor
         self.email_sender = email_sender
         self.sms_sender = sms_sender
@@ -33,7 +36,7 @@ class OrderService:
         # 2. price it
         subtotal = order.subtotal
         discount = self.discount_calculator.calculate(order)
-        shipping = 5.0 if subtotal < 100 else 0.0
+        shipping = self.shipping_calculator.calculate(subtotal)
         total = round(subtotal - discount + shipping, 2)
 
         # 3. charge the customer

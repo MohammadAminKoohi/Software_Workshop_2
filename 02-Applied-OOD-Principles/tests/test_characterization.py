@@ -7,7 +7,7 @@ from store.models import BundleOrder, Customer, Order, OrderItem
 from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
 from store.payment import PaymentProcessor
-from store.pricing import DiscountCalculator
+from store.pricing import DiscountCalculator, ShippingCalculator
 from store.storage import MySqlDatabase
 
 
@@ -48,6 +48,7 @@ def make_default_service():
     notification = NotificationService()
     return OrderService(
         discount_calculator=DiscountCalculator(),
+        shipping_calculator=ShippingCalculator(),
         payment_processor=PaymentProcessor(),
         email_sender=notification,
         sms_sender=notification,

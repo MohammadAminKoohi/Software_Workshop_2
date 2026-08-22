@@ -6,6 +6,7 @@ from store.contracts import (
     EmailSender,
     OrderRepository,
     PaymentProcessorPort,
+    ShippingCalculatorPort,
     SmsSender,
 )
 from store.main import build_demo_service
@@ -13,7 +14,7 @@ from store.models import Order, OrderItem
 from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
 from store.payment import PaymentProcessor
-from store.pricing import DiscountCalculator
+from store.pricing import DiscountCalculator, ShippingCalculator
 from store.storage import MySqlDatabase
 
 from test_characterization import capture_stdout, make_regular
@@ -37,6 +38,16 @@ class FakePaymentProcessor:
     def process(self, order, amount):
         self.calls.append((order, amount))
         return self.receipt
+
+
+class FakeShippingCalculator:
+    def __init__(self, shipping=5.0):
+        self.shipping = shipping
+        self.calls = []
+
+    def calculate(self, subtotal):
+        self.calls.append(subtotal)
+        return self.shipping
 
 
 class FakeEmailSender:
@@ -63,9 +74,10 @@ class FakeOrderRepository:
         self.saved.append(order)
 
 
-def make_fakes(discount=0.0):
+def make_fakes(discount=0.0, shipping=5.0):
     return {
         "discount_calculator": FakeDiscountCalculator(discount),
+        "shipping_calculator": FakeShippingCalculator(shipping),
         "payment_processor": FakePaymentProcessor(),
         "email_sender": FakeEmailSender(),
         "sms_sender": FakeSmsSender(),
@@ -82,13 +94,14 @@ def own_protocol_methods(protocol):
 
 
 class ConstructorRequiresCollaboratorsTests(TestCase):
-    def test_signature_exposes_exactly_the_five_required_collaborators(self):
+    def test_signature_exposes_exactly_the_required_collaborators(self):
         parameters = inspect.signature(OrderService.__init__).parameters
         self.assertEqual(
             list(parameters),
             [
                 "self",
                 "discount_calculator",
+                "shipping_calculator",
                 "payment_processor",
                 "email_sender",
                 "sms_sender",
@@ -103,6 +116,7 @@ class ConstructorRequiresCollaboratorsTests(TestCase):
     def test_each_missing_collaborator_raises_type_error(self):
         for missing in (
             "discount_calculator",
+            "shipping_calculator",
             "payment_processor",
             "email_sender",
             "sms_sender",
@@ -189,6 +203,7 @@ class StructuralConformanceTests(TestCase):
     def test_concrete_collaborators_satisfy_their_structural_contracts(self):
         notification = NotificationService()
         self.assertIsInstance(DiscountCalculator(), DiscountCalculatorPort)
+        self.assertIsInstance(ShippingCalculator(), ShippingCalculatorPort)
         self.assertIsInstance(PaymentProcessor(), PaymentProcessorPort)
         self.assertIsInstance(notification, EmailSender)
         self.assertIsInstance(notification, SmsSender)
@@ -197,6 +212,7 @@ class StructuralConformanceTests(TestCase):
 
     def test_each_contract_declares_only_the_method_order_service_calls(self):
         self.assertEqual(own_protocol_methods(DiscountCalculatorPort), {"calculate"})
+        self.assertEqual(own_protocol_methods(ShippingCalculatorPort), {"calculate"})
         self.assertEqual(own_protocol_methods(PaymentProcessorPort), {"process"})
         self.assertEqual(own_protocol_methods(EmailSender), {"send_email"})
         self.assertEqual(own_protocol_methods(SmsSender), {"send_sms"})
@@ -208,6 +224,7 @@ class CompositionRootWiringTests(TestCase):
         service = build_demo_service()
 
         self.assertIsInstance(service.discount_calculator, DiscountCalculator)
+        self.assertIsInstance(service.shipping_calculator, ShippingCalculator)
         self.assertIsInstance(service.payment_processor, PaymentProcessor)
         self.assertIsInstance(service.email_sender, NotificationService)
         self.assertIsInstance(service.sms_sender, NotificationService)

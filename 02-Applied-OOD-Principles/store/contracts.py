@@ -9,6 +9,11 @@ class DiscountCalculatorPort(Protocol):
 
 
 @runtime_checkable
+class ShippingCalculatorPort(Protocol):
+    def calculate(self, subtotal: float) -> float: ...
+
+
+@runtime_checkable
 class PaymentProcessorPort(Protocol):
     def process(self, order: Order, amount: float) -> str: ...
 
