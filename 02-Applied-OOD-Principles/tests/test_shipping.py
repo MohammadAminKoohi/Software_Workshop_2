@@ -6,6 +6,7 @@ from store.notification import NotificationService
 from store.order_service import OrderService
 from store.payment import PaymentProcessor
 from store.pricing import ShippingCalculator
+from store.receipt import ReceiptPrinter
 from store.storage import MySqlDatabase
 
 from test_characterization import capture_stdout, make_default_service, make_regular, make_vip
@@ -49,6 +50,7 @@ class ShippingInjectionTests(TestCase):
             email_sender=NotificationService(),
             sms_sender=NotificationService(),
             database=MySqlDatabase(),
+            receipt_printer=ReceiptPrinter(),
         )
         order = Order(
             id=501,

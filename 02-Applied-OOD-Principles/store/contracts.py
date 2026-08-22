@@ -31,3 +31,16 @@ class SmsSender(Protocol):
 @runtime_checkable
 class OrderRepository(Protocol):
     def save_order(self, order: Order) -> None: ...
+
+
+@runtime_checkable
+class ReceiptPresenter(Protocol):
+    def print_receipt(
+        self,
+        order: Order,
+        subtotal: float,
+        discount: float,
+        shipping: float,
+        total: float,
+        receipt: str,
+    ) -> None: ...

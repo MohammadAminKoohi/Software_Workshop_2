@@ -3,6 +3,7 @@ from store.notification import NotificationService
 from store.order_service import OrderService
 from store.payment import PaymentProcessor
 from store.pricing import DiscountCalculator, ShippingCalculator
+from store.receipt import ReceiptPrinter
 from store.storage import MySqlDatabase
 
 
@@ -41,6 +42,7 @@ def build_demo_service() -> OrderService:
         email_sender=notification,
         sms_sender=notification,
         database=MySqlDatabase(),
+        receipt_printer=ReceiptPrinter(),
     )
 
 

@@ -3,6 +3,7 @@ from store.contracts import (
     EmailSender,
     OrderRepository,
     PaymentProcessorPort,
+    ReceiptPresenter,
     ShippingCalculatorPort,
     SmsSender,
 )
@@ -18,6 +19,7 @@ class OrderService:
         email_sender: EmailSender,
         sms_sender: SmsSender,
         database: OrderRepository,
+        receipt_printer: ReceiptPresenter,
     ):
         self.discount_calculator = discount_calculator
         self.shipping_calculator = shipping_calculator
@@ -25,6 +27,7 @@ class OrderService:
         self.email_sender = email_sender
         self.sms_sender = sms_sender
         self.database = database
+        self.receipt_printer = receipt_printer
 
     def process_order(self, order: Order, notify: bool = True) -> Order:
         # 1. validate
@@ -53,15 +56,7 @@ class OrderService:
             self.sms_sender.send_sms(order.customer, message)
 
         # 6. print a receipt
-        self._print_receipt(order, subtotal, discount, shipping, total, receipt)
+        self.receipt_printer.print_receipt(
+            order, subtotal, discount, shipping, total, receipt
+        )
         return order
-
-    def _print_receipt(self, order, subtotal, discount, shipping, total, receipt):
-        print(f"--- Receipt for order {order.id} ---")
-        for item in order.items:
-            print(f"  {item.name:20s} x{item.quantity}  ${item.line_total:.2f}")
-        print(f"  Subtotal    ${subtotal:.2f}")
-        print(f"  Discount   -${discount:.2f}")
-        print(f"  Shipping    ${shipping:.2f}")
-        print(f"  TOTAL       ${total:.2f}")
-        print(f"  Payment     {receipt}")

@@ -6,6 +6,7 @@ from store.contracts import (
     EmailSender,
     OrderRepository,
     PaymentProcessorPort,
+    ReceiptPresenter,
     ShippingCalculatorPort,
     SmsSender,
 )
@@ -15,6 +16,7 @@ from store.notification import NotificationService, SmsOnlyNotifier
 from store.order_service import OrderService
 from store.payment import PaymentProcessor
 from store.pricing import DiscountCalculator, ShippingCalculator
+from store.receipt import ReceiptPrinter
 from store.storage import MySqlDatabase
 
 from test_characterization import capture_stdout, make_regular
@@ -74,6 +76,14 @@ class FakeOrderRepository:
         self.saved.append(order)
 
 
+class FakeReceiptPrinter:
+    def __init__(self):
+        self.calls = []
+
+    def print_receipt(self, order, subtotal, discount, shipping, total, receipt):
+        self.calls.append((order, subtotal, discount, shipping, total, receipt))
+
+
 def make_fakes(discount=0.0, shipping=5.0):
     return {
         "discount_calculator": FakeDiscountCalculator(discount),
@@ -82,6 +92,7 @@ def make_fakes(discount=0.0, shipping=5.0):
         "email_sender": FakeEmailSender(),
         "sms_sender": FakeSmsSender(),
         "database": FakeOrderRepository(),
+        "receipt_printer": FakeReceiptPrinter(),
     }
 
 
@@ -106,6 +117,7 @@ class ConstructorRequiresCollaboratorsTests(TestCase):
                 "email_sender",
                 "sms_sender",
                 "database",
+                "receipt_printer",
             ],
         )
 
@@ -121,6 +133,7 @@ class ConstructorRequiresCollaboratorsTests(TestCase):
             "email_sender",
             "sms_sender",
             "database",
+            "receipt_printer",
         ):
             with self.subTest(missing=missing):
                 kwargs = make_fakes()
@@ -165,9 +178,27 @@ class InjectedFakeOrchestrationTests(TestCase):
             self.fakes["sms_sender"].calls,
             [(self.customer, expected_message)],
         )
+        self.assertEqual(
+            self.fakes["receipt_printer"].calls,
+            [(self.order, 60.0, 6.0, 5.0, 59.0, "fake_receipt")],
+        )
 
-    def test_receipt_block_is_still_printed_by_the_service_itself(self):
-        _, output = capture_stdout(self.service.process_order, self.order)
+    def test_service_delegates_exactly_one_print_receipt_call(self):
+        capture_stdout(self.service.process_order, self.order)
+
+        self.assertEqual(len(self.fakes["receipt_printer"].calls), 1)
+
+    def test_receipt_block_is_still_rendered_by_the_real_presenter(self):
+        service = OrderService(
+            discount_calculator=self.fakes["discount_calculator"],
+            shipping_calculator=self.fakes["shipping_calculator"],
+            payment_processor=self.fakes["payment_processor"],
+            email_sender=self.fakes["email_sender"],
+            sms_sender=self.fakes["sms_sender"],
+            database=self.fakes["database"],
+            receipt_printer=ReceiptPrinter(),
+        )
+        _, output = capture_stdout(service.process_order, self.order)
 
         self.assertEqual(
             output,
@@ -197,6 +228,7 @@ class InjectedFakeOrchestrationTests(TestCase):
         self.assertEqual(self.fakes["discount_calculator"].calls, [])
         self.assertEqual(self.fakes["payment_processor"].calls, [])
         self.assertEqual(self.fakes["database"].saved, [])
+        self.assertEqual(self.fakes["receipt_printer"].calls, [])
 
 
 class StructuralConformanceTests(TestCase):
@@ -209,6 +241,7 @@ class StructuralConformanceTests(TestCase):
         self.assertIsInstance(notification, SmsSender)
         self.assertIsInstance(MySqlDatabase(), OrderRepository)
         self.assertIsInstance(SmsOnlyNotifier(), SmsSender)
+        self.assertIsInstance(ReceiptPrinter(), ReceiptPresenter)
 
     def test_each_contract_declares_only_the_method_order_service_calls(self):
         self.assertEqual(own_protocol_methods(DiscountCalculatorPort), {"calculate"})
@@ -217,6 +250,7 @@ class StructuralConformanceTests(TestCase):
         self.assertEqual(own_protocol_methods(EmailSender), {"send_email"})
         self.assertEqual(own_protocol_methods(SmsSender), {"send_sms"})
         self.assertEqual(own_protocol_methods(OrderRepository), {"save_order"})
+        self.assertEqual(own_protocol_methods(ReceiptPresenter), {"print_receipt"})
 
 
 class CompositionRootWiringTests(TestCase):
@@ -229,6 +263,7 @@ class CompositionRootWiringTests(TestCase):
         self.assertIsInstance(service.email_sender, NotificationService)
         self.assertIsInstance(service.sms_sender, NotificationService)
         self.assertIsInstance(service.database, MySqlDatabase)
+        self.assertIsInstance(service.receipt_printer, ReceiptPrinter)
 
     def test_demo_service_shares_one_notification_instance_for_both_channels(self):
         service = build_demo_service()
