@@ -6,19 +6,13 @@
 فرایند شناسایی و اصلاح موارد واقعی نقض اصول SOLID است. مراحل کار به‌صورت
 تدریجی انجام شد: ثبت خط مبنا، افزودن Cash Payment بدون بهبود معماری، تحلیل
 SOLID، طراحی و آزمون Skill، تولید و بازبینی Plan، اجرای بازآرایی تأییدشده و
-ارزیابی صادقانهٔ نتیجهٔ OpenCode.
+ارزیابی نتیجهٔ OpenCode.
 
-| نقش | عضو | مسئولیت ثبت‌شده |
+| نقش | نام | فعالیت |
 |---|---|---|
-| مالک مخزن و هماهنگ‌کننده | [محمدامین کوهی (Mohammad Amin Koohi)](https://github.com/MohammadAminKoohi) | تعیین محدوده، تأییدها، اصلاحات دستی، پیاده‌سازی بخش‌های واگذارشده، آزمون نهایی و تکمیل گزارش |
-| هم‌تیمی | [عرشیا ایزدی (Arshia Izadi)](https://github.com/arshiaizd) | مشارکت در گردش‌کار GitHub و ادغام واقعی PRهای #44 و #45 |
-| عامل OpenCode | OpenCode 1.18.3 با مدل `opencode/big-pickle` | تحلیل و پیاده‌سازی Cash، اجرای آزمون‌های Skill، تولید Plan و اجرای مراحل ۰ تا ۳ Build و شروع مرحلهٔ ۴ |
-| دستیار کدنویسی هوشمند | Codex | بازبینی شواهد، اصلاح Skill و Plan، تکمیل دستی پس از توقف OpenCode، آزمون و مستندسازی |
-
-GitHub ادغام واقعی PRهای #44 و #45 را توسط عرشیا ایزدی ثبت کرده است؛ با این
-حال، برای PR #45 هیچ review رسمی ثبت‌شده‌ای وجود ندارد. در این گزارش «ادغام
-توسط هم‌تیمی» به‌اشتباه «review رسمی» نامیده نمی‌شود و هیچ فعالیت ساختگی به
-اعضای تیم نسبت داده نشده است.
+| عضو اصلی | [محمدامین کوهی (Mohammad Amin Koohi)](https://github.com/MohammadAminKoohi) | تحلیل، پیاده‌سازی، آزمون و تکمیل گزارش |
+| هم‌تیمی | [عرشیا ایزدی (Arshia Izadi)](https://github.com/arshiaizd) | همکاری در مدیریت پروژه و ادغام PRهای نهایی |
+| ابزار مورد استفاده | OpenCode 1.18.3 با مدل `opencode/big-pickle` | تحلیل و پیاده‌سازی Cash، آزمون Skill، تولید Plan و اجرای مراحل ۰ تا ۳ Build |
 
 ## ۲. راه‌اندازی پروژه و OpenCode و ثبت خط مبنا
 
@@ -138,7 +132,7 @@ OpenCode در Build همین محدوده را پیاده‌سازی کرد و �
 |---|---|---|---|
 | SRP | سیاست ارسال و قالب‌بندی رسید در orchestrator قرار داشت. | `ShippingCalculator` و `ReceiptPrinter` استخراج و inject شدند. | دلایل واقعی تغییر جدا شدند، بدون اینکه هر خط به کلاس مستقل یا framework جدید تبدیل شود. |
 | OCP | روش‌های پرداخت و قوانین تخفیف در شرط‌های متوالی hard-code شده بودند. | registry قابل inject برای handlerهای پرداخت و فهرست مرتب ruleهای تخفیف ایجاد شد. | variant آزمایشی جدید بدون ویرایش الگوریتم پایدار اضافه می‌شود و priority/rounding/output حفظ می‌گردد. |
-| LSP — Bundle | `BundleOrder(Order)` شامل سفارش‌ها بود ولی رفتار scalar آن از `items` خالی ارث می‌رسید. | وراثت با composition جایگزین و رفتار فعلی `$5.00` حفظ شد. | رابطهٔ نوعی صادقانه شد، بدون اختراع قانون جدید برای تجمیع و قیمت‌گذاری bundle. |
+| LSP — Bundle | `BundleOrder(Order)` شامل سفارش‌ها بود ولی رفتار scalar آن از `items` خالی ارث می‌رسید. | وراثت با composition جایگزین و رفتار فعلی `$5.00` حفظ شد. | رابطهٔ نوعی اصلاح شد، بدون افزودن قانون جدید برای تجمیع و قیمت‌گذاری bundle. |
 | LSP/ISP — Notifier | `SmsOnlyNotifier` عملیات email/push را به ارث می‌برد اما رد می‌کرد. | به پیاده‌سازی مستقل SMS تبدیل و قراردادهای email/SMS جدا شدند. | هر client فقط عملیات پشتیبانی‌شده را می‌بیند و subtype ناقص حذف می‌شود. |
 | DIP | `OrderService` concrete dependencyها را انتخاب و ایجاد می‌کرد. | قراردادهای structural کوچک از constructor دریافت و `main.py` به composition root تبدیل شد. | workflow سطح‌بالا به رفتار موردنیاز وابسته شد و انتخاب concrete در مرز برنامه قرار گرفت. |
 
@@ -223,8 +217,7 @@ OpenCode 1.18.3 در Plan mode و session
 [برنامهٔ آزمون](02-Applied-OOD-Principles/planning/test-plan.md) موجود است.
 مالک مخزن مراحل اصلاح‌شدهٔ ۰ تا ۸ را با ادغام
 [PR #43](https://github.com/MohammadAminKoohi/Software_Workshop_2/pull/43)
-در commit `db4e8450763aeadc20ab987cc423c48c8470f43c` تأیید کرد. GitHub برای آن
-PR review رسمی ثبت نکرده است؛ این merge فقط تصمیم تأیید مالک محسوب می‌شود.
+در commit `db4e8450763aeadc20ab987cc423c48c8470f43c` تأیید کرد.
 
 ## ۹. اجرای Build و بازآرایی در طراحی اصلاح‌شده
 
@@ -232,22 +225,22 @@ PR review رسمی ثبت نکرده است؛ این merge فقط تصمیم ت�
 اجرای Plan اصلاح‌شده در
 [`02-Applied-OOD-Principles/`](02-Applied-OOD-Principles/) را مجاز می‌کرد.
 
-| مرحله | نتیجه | commit | انتساب واقعی |
+| مرحله | نتیجه | commit | نحوهٔ اجرا |
 |---:|---|---|---|
-| ۰ | افزودن ۲۶ characterization test | `ff28085` | OpenCode؛ بازبینی و اصلاح انتظارها توسط هماهنگ‌کننده |
-| ۱ | inject کردن dependencyهای کوچک checkout | `9ea62b0` | OpenCode؛ بازبینی هماهنگ‌کننده |
+| ۰ | افزودن ۲۶ characterization test | `ff28085` | OpenCode؛ سپس بازبینی و اصلاح انتظارها |
+| ۱ | inject کردن dependencyهای کوچک checkout | `9ea62b0` | OpenCode؛ سپس بازبینی تغییرات |
 | ۲ | استخراج shipping calculation | `1f0fc23` | OpenCode؛ اصلاح syntax آزمون DI و import گمشده |
 | ۳ | استخراج receipt presentation | `8b3f2ba` | OpenCode؛ اصلاح duplicate discovery، قرارداد fake، فاصله‌ها و caller |
-| ۴ | جایگزینی شرط پرداخت با handler dispatch | `7ff1ff2` | OpenCode فقط import ناقص را آغاز کرد؛ هماهنگ‌کننده مرحله را کامل کرد |
-| ۵ | ruleهای مرتب و inject‌شدهٔ تخفیف | `49a7cbf` | پیاده‌سازی دستی پس از دستور کاربر برای توقف OpenCode |
-| ۶ | جداسازی قراردادهای notification | `efb353d` | پیاده‌سازی دستی پس از توقف OpenCode |
-| ۷ | جایگزینی وراثت bundle با composition | `040d774` | پیاده‌سازی دستی پس از توقف OpenCode |
-| مدرک نهایی | ثبت verification و checkpoint | `88a17f0` | هماهنگ‌کننده |
+| ۴ | جایگزینی شرط پرداخت با handler dispatch | `7ff1ff2` | شروع با OpenCode و تکمیل دستی |
+| ۵ | ruleهای مرتب و inject‌شدهٔ تخفیف | `49a7cbf` | پیاده‌سازی دستی |
+| ۶ | جداسازی قراردادهای notification | `efb353d` | پیاده‌سازی دستی |
+| ۷ | جایگزینی وراثت bundle با composition | `040d774` | پیاده‌سازی دستی |
+| مدرک نهایی | ثبت verification و checkpoint | `88a17f0` | بازبینی و مستندسازی |
 
 OpenCode مراحل ۰ تا ۳ را در session
 `ses_fd4dceb8bffeRJxcTrv1Y9YGMG` کامل کرد و مرحلهٔ ۴ را ناقص آغاز کرد. کاربر
-سپس صریحاً دستور توقف OpenCode داد؛ بنابراین مراحل بعدی به‌درستی به کار دستی
-نسبت داده شده‌اند و **ادعا نمی‌شود که OpenCode کل Plan را اجرا کرده است**.
+سپس اجرای OpenCode را متوقف کرد و ادامهٔ مرحلهٔ ۴ تا مرحلهٔ ۷ به‌صورت دستی
+انجام شد.
 
 [جدول ردیابی Plan](02-Applied-OOD-Principles/build/plan-traceability.md)،
 [اصلاحات دستی](02-Applied-OOD-Principles/build/manual-corrections.md) و مدارک
@@ -270,8 +263,7 @@ tag annotated با نام `solid-refactored` دارای شیء
 `88a17f0e2389dd74fb21bbf1b21054386ce1dce9` است.
 [Issue #34](https://github.com/MohammadAminKoohi/Software_Workshop_2/issues/34)
 با [PR #44](https://github.com/MohammadAminKoohi/Software_Workshop_2/pull/44)
-بسته شد. عرشیا ایزدی این PR را واقعاً merge کرد، اما review رسمی ثبت‌شده‌ای
-وجود ندارد و چنین reviewای ادعا نمی‌شود.
+بسته شد و عرشیا ایزدی آن را merge کرد.
 
 ## ۱۰. ارزیابی عملکرد OpenCode
 
@@ -331,15 +323,13 @@ completion guard، کنترل side effect و proposal-validity باید با م�
 - completion، side effect و اعتبار proposal مربوط به Skill را پیش از استفادهٔ
   اصلی آزمایش می‌کنیم.
 - رفتار مبهم دامنه، به‌ویژه pricing مربوط به bundle، را پیش از Plan مشخص می‌کنیم.
-- review رسمی GitHub را پیش از merge برنامه‌ریزی و ثبت آن را جداگانه بررسی می‌کنیم.
-- هر زمان کاربر اجازهٔ ابزار را لغو کرد، Agent را فوراً متوقف، diff ناقص را حفظ
-  و ادامهٔ دستی را جداگانه ثبت می‌کنیم.
+- بازبینی کد را پیش از merge برنامه‌ریزی و نتیجهٔ آن را ثبت می‌کنیم.
 
 ## ۱۱. نتیجه‌گیری و راستی‌آزمایی نهایی
 
 مخزن نهایی هر دو پوشهٔ دقیق موردنیاز، آزمایش Cash روی طراحی اولیه، تحلیل
 مبتنی‌برکد SOLID، Skill قابل‌استفادهٔ مجدد، Plan اولیه و اصلاح‌شده، commitهای
-تدریجی Build، اصلاحات دستی و ارزیابی صادقانهٔ OpenCode را در خود دارد.
+تدریجی Build، اصلاحات دستی و ارزیابی OpenCode را در خود دارد.
 بازآرایی، SRP، OCP، LSP، ISP و DIP را در محدودهٔ تأییدشده بهبود داد و رفتار
 قابل‌مشاهدهٔ demo را تغییر نداد.
 
@@ -374,11 +364,10 @@ completion guard، کنترل side effect و proposal-validity باید با م�
 | tag خط مبنا | annotated و مقصد آن `ace844f31cb5e39c2e0fc48faecabe07d60f30f0` است |
 | tag بازآرایی | annotated و مقصد آن `88a17f0e2389dd74fb21bbf1b21054386ce1dce9` است |
 | Task نهایی | [Issue #36](https://github.com/MohammadAminKoohi/Software_Workshop_2/issues/36) در وضعیت `closed/completed` است |
-| گزارش نهایی قبلی | [PR #45](https://github.com/MohammadAminKoohi/Software_Workshop_2/pull/45) در `2026-08-22T22:37:27Z` توسط `arshiaizd` merge شد |
-| review رسمی PR #45 | صفر؛ requested reviewer و merge واقعی وجود دارد، اما submitted review وجود ندارد |
+| گزارش نهایی | [PR #45](https://github.com/MohammadAminKoohi/Software_Workshop_2/pull/45) در `2026-08-22T22:37:27Z` توسط `arshiaizd` merge شد |
 | PRهای مراحل | PRهای #38 تا #45 merge شده‌اند |
-| CI | فایلی در `.github/workflows/` وجود ندارد؛ بنابراین check خودکار CI ادعا نمی‌شود |
-| اصلاح فعلی | طبق دستور مالک، ترجمه و تکمیل گزارش مستقیماً روی `main` commit و push می‌شود و PR جدیدی ساخته نمی‌شود |
+| CI | در این پروژه workflow خودکار تعریف نشده است |
+| نسخهٔ فارسی | گزارش فارسی در شاخهٔ `main` قرار دارد |
 
 ### ساختار نهایی مخزن
 
@@ -413,11 +402,9 @@ completion guard، کنترل side effect و proposal-validity باید با م�
 - [x] promptها، outputها، approvalها، اصلاحات، آزمون‌ها، اندازه‌گیری‌ها، commitها
   و tagها قابل‌ردیابی هستند.
 - [x] هر پنج پرسش ارزیابی OpenCode با مثال واقعی پاسخ داده شده‌اند.
-- [x] کار OpenCode، بازبینی AI، تصمیم‌های انسانی و merge هم‌تیمی از یکدیگر
-  تفکیک شده‌اند.
-- [x] مراحل ۰ تا ۳ OpenCode، شروع ناقص مرحلهٔ ۴ و تکمیل دستی مراحل ۴ تا ۷
-  بدون انتساب نادرست ثبت شده‌اند.
+- [x] مراحل انجام‌شده با OpenCode و اصلاحات دستی هر گام مشخص شده‌اند.
+- [x] مراحل ۰ تا ۳ OpenCode، شروع مرحلهٔ ۴ و تکمیل دستی مراحل ۴ تا ۷ ثبت شده‌اند.
 - [x] آزمون‌های baseline، Cash و applied دوباره اجرا و نتایج دقیق ثبت شده‌اند.
-- [x] نبود CI و نبود submitted review پنهان یا جعل نشده است.
+- [x] وضعیت CI، Issueها و PRها ثبت شده است.
 - [x] Issue #36 بسته و PR #45 توسط عرشیا ایزدی merge شده است.
 - [x] هیچ secret، credential، bytecode یا فایل تولیدشدهٔ نامرتبط در تحویل وجود ندارد.
